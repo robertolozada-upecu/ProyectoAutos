@@ -1,0 +1,73 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:modelo="clr-namespace:ProyectoAutos.Modelos"
+             xmlns:viewmodel="clr-namespace:ProyectoAutos.ViewModels"
+             x:DataType="viewmodel:ListadoAutosViewModel"
+             Title="{Binding Titulo}"
+             x:Class="ProyectoAutos.MainPage">
+
+    <ScrollView>
+        <Grid ColumnSpacing="1" RowSpacing="1" Padding="5">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+
+
+            <VerticalStackLayout Padding="5" Grid.Row="0" Margin="9">
+                <Entry x:Name="Marca" Placeholder="Ingrese una marca" Text="{Binding Marca}"/>
+                <Entry x:Name="Modelo" Placeholder="Ingrese un modelo" Text="{Binding Modelo}"/>
+                <Entry x:Name="Placa" Placeholder="Ingrese una placa" Text="{Binding Placa}"/>
+            </VerticalStackLayout>
+
+            <Button x:Name="AgregarEditarAuto" Text="Agregar/Actualizar Auto" Grid.Row="1" IsEnabled="{Binding NoEstaCargando}" Margin="9"
+                Command="{Binding AgregarAutoCommand}"/>
+            <Button Text="Limpiar formulario" Grid.Row="2" IsEnabled="{Binding NoEstaCargando}" Margin="9"
+                Command="{Binding LimpiarFormularioCommand}"/>
+
+            <RefreshView Grid.Row="4"
+                     Command="{Binding ObtenerListaAutosCommand}"
+                     IsRefreshing="{Binding EstaRefrescando}">
+                <CollectionView ItemsSource="{Binding Autos}" SelectionMode="None">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="modelo:Auto">
+                            <Grid Padding="10" ColumnDefinitions="*, auto">
+                                <Frame HeightRequest="70" Grid.Column="0">
+                                    <Frame.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:ListadoAutosViewModel}}, Path=IrADetallesAutoCommand }"
+                                                          CommandParameter="{Binding Id}"/>
+                                    </Frame.GestureRecognizers>
+
+                                    <HorizontalStackLayout Padding="5" Spacing="5">
+                                        <Label Text="{Binding Id}"></Label>
+                                        <Label Text="{Binding Marca}"></Label>
+                                        <Label Text="{Binding Modelo}"></Label>
+                                    </HorizontalStackLayout>
+                                </Frame>
+
+                                <HorizontalStackLayout Grid.Column="1">
+                                    <Button Text="  Editar  " Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:ListadoAutosViewModel}}, Path=EditarAutoCommand }"
+                                        CommandParameter="{Binding Id}" Margin="2"/>
+                                    <Button Text="Eliminar" Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:ListadoAutosViewModel}}, Path=EliminarAutoCommand }"
+                                        CommandParameter="{Binding Id}" Margin="2"/>
+                                </HorizontalStackLayout>
+                            </Grid>
+
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </RefreshView>
+        </Grid>
+    </ScrollView>
+
+</ContentPage>

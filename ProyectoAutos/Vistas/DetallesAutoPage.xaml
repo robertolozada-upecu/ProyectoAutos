@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ProyectoAutos.Vistas.DetallesAutoPage"
+             xmlns:viewmodel="clr-namespace:ProyectoAutos.ViewModels"
+             x:DataType="viewmodel:DetallesAutoViewModel"
+             Title="DetallesAutoPage">
+
+
+    <VerticalStackLayout Padding="10">
+        <Label 
+            Text="{Binding Carro.Id, StringFormat='Id: {0}'}" />
+        <Label
+            Text="{Binding Carro.Marca, StringFormat='Marca: {0}'}" />
+        <Label
+            Text="{Binding Carro.Modelo, StringFormat='Modelo: {0}'}" />
+        <Label
+            Text="{Binding Carro.Placa, StringFormat='Placa: {0}'}" />
+    </VerticalStackLayout>
+</ContentPage>

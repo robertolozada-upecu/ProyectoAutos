@@ -89,7 +89,7 @@ namespace ProyectoAutos.Servicios
             return null;
         }
 
-        public void ActualizarAuto(int id, Auto auto)
+        public void ActualizarAuto(Auto auto)
         {
             try
             {
@@ -97,10 +97,8 @@ namespace ProyectoAutos.Servicios
 
                 if (auto == null)
                     throw new Exception("Auto no válido");
-
-                auto.Id = id;
                 var resultado = conexion.Update(auto);
-                MensajeEstado = resultado == 0 ? "La operación de autualización ha fallado" : "Actualización exitosa";
+                MensajeEstado = resultado == 0 ? "La operación de actualización ha fallado" : "Actualización exitosa";
             }
             catch (Exception)
             {

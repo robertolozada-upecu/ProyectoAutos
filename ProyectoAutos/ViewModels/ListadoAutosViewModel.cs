@@ -1,8 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ProyectoAutos.Modelos;
-using ProyectoAutos.Servicios;
-using ProyectoAutos.Vistas;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 
@@ -80,12 +78,13 @@ namespace ProyectoAutos.ViewModels
             }
             else
             {
-                App.AutoService.ActualizarAuto(Identificador, auto);
+                auto.Id = Identificador;
+                Identificador = 0;
+                App.AutoService.ActualizarAuto(auto);
             }
             
             await Shell.Current.DisplayAlert("Info", App.AutoService.MensajeEstado, "Ok");
             await LimpiarFormulario();
-            //await ObtenerListaAutos();
         }
 
         [RelayCommand]
@@ -109,6 +108,7 @@ namespace ProyectoAutos.ViewModels
             Marca = string.Empty;
             Modelo = string.Empty;
             Placa = string.Empty;
+            Identificador = 0;
             await ObtenerListaAutos();
         }
 

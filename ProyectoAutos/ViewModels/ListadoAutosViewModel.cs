@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ProyectoAutos.Modelos;
+using ProyectoAutos.Servicios;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 
@@ -19,13 +20,25 @@ namespace ProyectoAutos.ViewModels
         [ObservableProperty]
         string placa;
 
+        public enum Conexion {Local, API};
+        public Conexion tipoConexion = Conexion.Local;
+
+        private readonly AutoApiService _autoApiService;
 
         public ObservableCollection<Auto> Autos { get; private set; } = new();
 
-        public ListadoAutosViewModel()
+        public ListadoAutosViewModel(AutoApiService autoApiService)
         {
             Titulo = "Listado de autos";
-            ObtenerListaAutos().Wait();
+            _autoApiService = autoApiService;
+            if (tipoConexion == Conexion.Local)
+            {
+                ObtenerListaAutos().Wait();
+            }
+            else
+            {
+                _ = ObtenerListaAutos();
+            }
         }
 
         [RelayCommand]
@@ -38,8 +51,10 @@ namespace ProyectoAutos.ViewModels
                 if(Autos.Any())
                     Autos.Clear();
 
+                //No se puede poner dentro del if la declaración de autos
                 var autos= App.AutoService.ObtenerAutos();
-                foreach(var auto in autos)
+                //var autos = await _autoApiService.ObtenerAutos();
+                foreach (var auto in autos)
                 {
                     Autos.Add(auto);
                 }
@@ -74,13 +89,28 @@ namespace ProyectoAutos.ViewModels
 
             if (Identificador==0)
             {
-                App.AutoService.AgregarAuto(auto);
+                if (tipoConexion == Conexion.Local)
+                {
+                    App.AutoService.AgregarAuto(auto);
+                }
+                else
+                {
+                    await _autoApiService.AgregarAuto(auto);
+                }
             }
             else
             {
-                auto.Id = Identificador;
-                Identificador = 0;
-                App.AutoService.ActualizarAuto(auto);
+                if (tipoConexion == Conexion.Local)
+                {
+                    auto.Id = Identificador;
+                    Identificador = 0;
+                    App.AutoService.ActualizarAuto(auto);
+                }
+                else
+                {
+                    await _autoApiService.ActualizarAuto(Identificador, auto);
+                    Identificador = 0;
+                } 
             }
             
             await Shell.Current.DisplayAlert("Info", App.AutoService.MensajeEstado, "Ok");
@@ -95,7 +125,16 @@ namespace ProyectoAutos.ViewModels
                 await Shell.Current.DisplayAlert("Error", "Por favor, intente otra vez", "Ok");
                 return;
             }
-            var auto = App.AutoService.ObtenerAuto(id);
+
+            Auto auto;
+            if (tipoConexion == Conexion.Local)
+            {
+                auto = App.AutoService.ObtenerAuto(id);
+            }
+            else
+            {
+                auto = await _autoApiService.ObtenerAuto(id);
+            }
             Identificador = id;
             Marca = auto.Marca;
             Modelo = auto.Modelo;
@@ -120,7 +159,15 @@ namespace ProyectoAutos.ViewModels
                 await Shell.Current.DisplayAlert("Error", "Por favor, intente otra vez", "Ok");
                 return;
             }
-            App.AutoService.EliminarAuto(id);
+            if (tipoConexion == Conexion.Local)
+            {
+                App.AutoService.EliminarAuto(id);
+            }
+            else
+            {
+                await _autoApiService.EliminarAuto(id);
+            }
+                
             await Shell.Current.DisplayAlert("Info", App.AutoService.MensajeEstado, "Ok");
             await ObtenerListaAutos();
         }
@@ -129,8 +176,15 @@ namespace ProyectoAutos.ViewModels
         async Task IrADetalleAuto(int id)
         {
             if (id == 0) return;
-            
-            await Shell.Current.GoToAsync($"DetallesAutoPage?id={id}", true);
+
+            if (tipoConexion == Conexion.Local)
+            {
+                await Shell.Current.GoToAsync($"DetallesAutoPage?id={id}", true);
+            }
+            else
+            {
+                await Shell.Current.GoToAsync($"DetallesAutoPage?id={id}", true);
+            }
         }
     }
 }

@@ -24,8 +24,9 @@ public static class MauiProgram
 		var pathDB = Path.Combine(FileSystem.AppDataDirectory, "auto.db");
 		
 		builder.Services.AddSingleton<AutoService>(servicios => ActivatorUtilities.CreateInstance<AutoService>(servicios, pathDB));
-        
-		builder.Services.AddSingleton<ListadoAutosViewModel>();
+		builder.Services.AddTransient<AutoApiService>();
+
+        builder.Services.AddSingleton<ListadoAutosViewModel>();
         builder.Services.AddTransient<DetallesAutoViewModel>();
 
         builder.Services.AddSingleton<MainPage>();

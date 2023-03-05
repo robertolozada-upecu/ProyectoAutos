@@ -51,8 +51,12 @@ namespace ProyectoAutos.ViewModels
                 if(Autos.Any())
                     Autos.Clear();
 
-                //No se puede poner dentro del if la declaración de autos
-                var autos= App.AutoService.ObtenerAutos();
+                var autos = new List<Auto>();
+                if (tipoConexion == Conexion.Local)
+                    autos = App.AutoService.ObtenerAutos();
+                else
+                    autos = await _autoApiService.ObtenerAutos();
+                //var autos = App.AutoService.ObtenerAutos();
                 //var autos = await _autoApiService.ObtenerAutos();
                 foreach (var auto in autos)
                 {
@@ -92,10 +96,12 @@ namespace ProyectoAutos.ViewModels
                 if (tipoConexion == Conexion.Local)
                 {
                     App.AutoService.AgregarAuto(auto);
+                    await Shell.Current.DisplayAlert("Info", App.AutoService.MensajeEstado, "Ok");
                 }
                 else
                 {
                     await _autoApiService.AgregarAuto(auto);
+                    await Shell.Current.DisplayAlert("Info", _autoApiService.MensajeEstado, "Ok");
                 }
             }
             else
@@ -105,15 +111,15 @@ namespace ProyectoAutos.ViewModels
                     auto.Id = Identificador;
                     Identificador = 0;
                     App.AutoService.ActualizarAuto(auto);
+                    await Shell.Current.DisplayAlert("Info", App.AutoService.MensajeEstado, "Ok");
                 }
                 else
                 {
                     await _autoApiService.ActualizarAuto(Identificador, auto);
                     Identificador = 0;
+                    await Shell.Current.DisplayAlert("Info", _autoApiService.MensajeEstado, "Ok");
                 } 
             }
-            
-            await Shell.Current.DisplayAlert("Info", App.AutoService.MensajeEstado, "Ok");
             await LimpiarFormulario();
         }
 
@@ -162,13 +168,13 @@ namespace ProyectoAutos.ViewModels
             if (tipoConexion == Conexion.Local)
             {
                 App.AutoService.EliminarAuto(id);
+                await Shell.Current.DisplayAlert("Info", App.AutoService.MensajeEstado, "Ok");
             }
             else
             {
                 await _autoApiService.EliminarAuto(id);
+                await Shell.Current.DisplayAlert("Info", _autoApiService.MensajeEstado, "Ok");
             }
-                
-            await Shell.Current.DisplayAlert("Info", App.AutoService.MensajeEstado, "Ok");
             await ObtenerListaAutos();
         }
 

@@ -37,7 +37,7 @@ namespace ProyectoAutos.Servicios
             {
                 var respuesta = await _httpClient.PostAsJsonAsync("/autos", auto);
                 respuesta.EnsureSuccessStatusCode();
-                MensajeEstado = "Ingreso exitoso";
+                MensajeEstado = respuesta.EnsureSuccessStatusCode().IsSuccessStatusCode ? "Ingreso exitoso" : "La operación de inserción ha fallado";
             }
             catch (Exception)
             {
@@ -51,7 +51,7 @@ namespace ProyectoAutos.Servicios
             {
                 var respuesta = await _httpClient.DeleteAsync($"/autos/{id}");
                 respuesta.EnsureSuccessStatusCode();
-                MensajeEstado = "Eliminación exitosa";
+                MensajeEstado = respuesta.EnsureSuccessStatusCode().IsSuccessStatusCode ? "Eliminación exitosa" : "La operación de borrado ha fallado";
             }
             catch (Exception)
             {
@@ -83,7 +83,7 @@ namespace ProyectoAutos.Servicios
                     throw new Exception("Auto no válido");
                 var resultado = await _httpClient.PutAsJsonAsync($"/autos/{id}", automodificado);
                 resultado.EnsureSuccessStatusCode();
-                MensajeEstado = "Actualización exitosa";
+                MensajeEstado = resultado.EnsureSuccessStatusCode().IsSuccessStatusCode ? "Actualización exitosa" : "La operación de actualización ha fallado";
             }
             catch (Exception)
             {

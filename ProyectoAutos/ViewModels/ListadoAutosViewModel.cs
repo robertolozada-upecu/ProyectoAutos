@@ -51,11 +51,12 @@ namespace ProyectoAutos.ViewModels
                 if(Autos.Any())
                     Autos.Clear();
 
-                var autos = new List<Auto>();
-                if (tipoConexion == Conexion.Local)
-                    autos = App.AutoService.ObtenerAutos();
-                else
-                    autos = await _autoApiService.ObtenerAutos();
+                var autos = tipoConexion == Conexion.Local ? App.AutoService.ObtenerAutos() : await _autoApiService.ObtenerAutos();
+                //var autos = new List<Auto>();
+                //if (tipoConexion == Conexion.Local)
+                //    autos = App.AutoService.ObtenerAutos();
+                //else
+                //    autos = await _autoApiService.ObtenerAutos();
                 //var autos = App.AutoService.ObtenerAutos();
                 //var autos = await _autoApiService.ObtenerAutos();
                 foreach (var auto in autos)
@@ -132,15 +133,7 @@ namespace ProyectoAutos.ViewModels
                 return;
             }
 
-            Auto auto;
-            if (tipoConexion == Conexion.Local)
-            {
-                auto = App.AutoService.ObtenerAuto(id);
-            }
-            else
-            {
-                auto = await _autoApiService.ObtenerAuto(id);
-            }
+            var auto = tipoConexion == Conexion.Local ? App.AutoService.ObtenerAuto(id) : await _autoApiService.ObtenerAuto(id);
             Identificador = id;
             Marca = auto.Marca;
             Modelo = auto.Modelo;
